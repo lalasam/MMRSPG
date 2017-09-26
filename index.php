@@ -82,10 +82,8 @@ else { // user logged in already
 
 <?
 	function print_get_my_data(){
-		/*echo "
-			<button type='button' onclick='loadMyData()'>Get My Data</button>
-			<button type='button' onclick='logout()'>Logout</button>
-		";*/
+		//echo "<button type='button' onclick='loadMyData()'>Get My Data</button>";
+		echo "<button type='button' onclick='logout()'>Logout</button>";
 		echo "<br>ME
 			<div id='div_my'></div>
 		";
