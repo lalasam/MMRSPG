@@ -12,6 +12,14 @@ function loadMyData() {
 		for(var i in jobj){
 		  document.getElementById("div_my").innerHTML+= i+":"+jobj[i]+"<br>";
 		}
+		if(jobj['status']=='idle') 
+			document.getElementById('div_create_g').style.display='inline-block';
+		else 
+			document.getElementById('div_create_g').style.display='none';
+		if(jobj['status']=='create_waiting') 
+			document.getElementById('div_cancel_create').style.display='inline-block';
+		else 
+			document.getElementById('div_cancel_create').style.display='none';
     }
   };
   xhttp.open("POST", "get_my_data.php", true);
@@ -46,6 +54,63 @@ function check_login(f){
 	return true;
 }
 
+function create_game() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+		document.getElementById("div_others").innerHTML=this.responseText;
+    }
+  };
+  xhttp.open("POST", "create_game.php", true);
+  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhttp.send("uname=<?=$_POST['uname']?>");
+}
+
+function join(pname) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+		document.getElementById("div_others").innerHTML=this.responseText;
+    }
+  };
+  xhttp.open("POST", "join_game.php", true);
+  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhttp.send("uname=<?=$_POST['uname']?>&pname="+pname);
+}
+
+function leave_game(pname) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+		document.getElementById("div_others").innerHTML=this.responseText;
+    }
+  };
+  xhttp.open("POST", "leave_game.php", true);
+  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhttp.send("uname=<?=$_POST['uname']?>&pname="+pname);
+}
+
+function cancel_create() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+	  ;
+  };
+  xhttp.open("POST", "cancel_create.php", true);
+  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhttp.send("uname=<?=$_POST['uname']?>");
+}
+
+function join(pname) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+		document.getElementById("div_others").innerHTML=this.responseText;
+    }
+  };
+  xhttp.open("POST", "join_game.php", true);
+  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhttp.send("uname=<?=$_POST['uname']?>&pname="+pname);
+}
 </script>
 </head>
 
@@ -54,7 +119,7 @@ function check_login(f){
 	<input type='hidden' name='operation'>
 	<h2>Welcome to MIU IT Massive Multi-RSP Game!</h2>
 <?
-session_start();
+session_start(); // $_SESSION['id'] is used for maintaining a user's session
 if($_POST['operation']=='LOGIN'){
 	if(check_name_conflict($_POST['uname'])){ // name conflict
 		echo "<script>alert('".$_POST['uname']." already exists!');</script>";
@@ -71,11 +136,12 @@ if(!$_SESSION['id']) { // user login required
 }
 else { // user logged in already
 	print_get_my_data();
-	print_others_data();
 	print_polling();
-}
+	print_create_game();
+	print_cancel_create();	
+	print_others_data();
+}	
 ?>
-	
 	</form>	
  </body>
 </html>
@@ -84,14 +150,14 @@ else { // user logged in already
 	function print_get_my_data(){
 		//echo "<button type='button' onclick='loadMyData()'>Get My Data</button>";
 		echo "<button type='button' onclick='logout()'>Logout</button>";
-		echo "<br>ME
+		echo "<br><b>ME</b>
 			<div id='div_my'></div>
 		";
 	}
 	
 	function print_others_data(){
 		echo "
-			<br>OTHERS
+			<br><b><font color=green>Channel</font></b>
 			<div id='div_others'></div>
 		";
 	}
@@ -114,6 +180,12 @@ else { // user logged in already
 		";
 	}
 	
+	function print_create_game(){
+		echo "<input type=button id ='div_create_g' style='display:none;' value='create a game' onClick='create_game();'> ";
+	}
+	function print_cancel_create(){
+		echo "<input type=button id ='div_cancel_create' style='display:none;' value='Cancel Creating Game' onClick='cancel_create();'> ";
+	}
 	
 	function check_name_conflict($uname){
 		$dir=".";
