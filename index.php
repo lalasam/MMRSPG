@@ -157,8 +157,7 @@ else { // user logged in already
 	
 	function print_others_data(){
 		echo "
-			<br><b><font color=green>Channel</font></b>
-			<div id='div_others'></div>
+			<p><div id='div_others'></div></p>
 		";
 	}
 	
